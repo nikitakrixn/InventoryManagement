@@ -1,6 +1,4 @@
-mod app;
-mod employee;
-pub use app::EmployeeInventoryApp;
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() -> eframe::Result<()> {
 
@@ -18,6 +16,6 @@ fn main() -> eframe::Result<()> {
     eframe::run_native(
         "Система учета выдачи имущества сотрудникам",
         native_options,
-        Box::new(|cc| Box::new(EmployeeInventoryApp::new(cc))),
+        Box::new(|_cc| Box::new(inventory_control_system::InventoryApp::default())),
     )
 }
