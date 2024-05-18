@@ -1,21 +1,29 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-fn main() -> eframe::Result<()> {
+use std::sync::Arc;
+use crate::app::InventoryApp;
+use crate::repository::Repository;
+
+mod models;
+mod db;
+mod repository;
+mod app;
+
+#[tokio::main]
+async fn main() -> eframe::Result<()> {
+
+    dotenv::dotenv().ok();
+
+    let repo = Arc::new(Repository::new().await.unwrap());
 
     let native_options = eframe::NativeOptions {
-        viewport: egui::ViewportBuilder::default()
-            .with_inner_size([600.0, 500.0])
-            .with_min_inner_size([300.0, 200.0])
-            .with_icon(
-                eframe::icon_data::from_png_bytes(&include_bytes!("../assets/icon.png")[..])
-                    .expect("Failed to load icon")
-            ),
+        viewport: egui::ViewportBuilder::default().with_inner_size([620.0, 600.0]),
         ..Default::default()
     };
 
     eframe::run_native(
-        "Система учета выдачи имущества сотрудникам",
+        "Управление выдачей имущества",
         native_options,
-        Box::new(|_cc| Box::new(inventory_control_system::InventoryApp::default())),
+        Box::new(|cc| Box::new(InventoryApp::new(cc, repo)))
     )
 }
